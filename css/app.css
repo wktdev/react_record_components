@@ -1,0 +1,12 @@
+button{
+	display:inline-block;
+	font-size:2em;
+	margin-left:30px;
+}
+
+#loader{
+
+    position: absolute;
+
+  
+}
