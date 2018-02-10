@@ -101,7 +101,7 @@ class TimeDisplay extends React.Component {
 
 
         return (
-            <div>   
+            <div id="time-display">   
              <TimeElapsed  timeElapsed={this.state.timeElapsed} />
           </div>
         )
@@ -123,7 +123,24 @@ class Button extends React.Component {
     }
 
     render() {
-        return (<button onClick={this.props.onClick}>{this.props.buttonText}</button>)
+
+        let recordingButton = {
+
+        }
+
+        let changeColor = {
+          color:"red",
+
+        }
+
+        if(this.props.isRecording){
+           recordingButton = changeColor
+        }else{
+          recordingButton ={}
+        }
+
+
+        return (<button style={recordingButton} onClick={this.props.onClick}>{this.props.buttonText}</button>)
     }
 }
 
@@ -185,9 +202,11 @@ class App extends React.Component {
 
             this.setState({
                 isRecording: true,
+
                 recordButtonText: "Stop Recording",
             })
-
+         
+           audioRecorder.record();
 
         } else {
 
@@ -195,6 +214,21 @@ class App extends React.Component {
                 isRecording: false,
                 recordButtonText: "Start Recording"
             })
+
+            audioRecorder.stop();
+
+        }
+
+        var isPlaying = this.state.isPlaying;
+
+        if (!isPlaying) {
+
+            this.setState({
+                isPlaying: true,
+                playButtonText: "Stop Song",
+            })
+
+            this.song.play()
 
         }
 
@@ -209,13 +243,13 @@ class App extends React.Component {
 
     render() {
 
-        const goldPanel = {
-            backgroundColor: "#ebc922",
-            height: "100px",
-            position: "relative",
-            top: "40%",
-            width: "700px"
-        }
+        // const goldPanel = {
+        //     backgroundColor: "#ebc922",
+        //     height: "100px",
+        //     position: "relative",
+        //     top: "40%",
+        //     width: "700px"
+        // }
 
         const mainContainer = {
             width: "700px",
@@ -224,17 +258,21 @@ class App extends React.Component {
             outlineStyle: "solid"
         }
 
-        return (
-            <main style = {mainContainer}>  
-            <Loader/>
-              <section style={goldPanel}>
-              <TimeDisplay isPlaying = {this.state.isPlaying}/>
-              <div className="buttonContainer">
-                 <Button buttonText = {this.state.recordButtonText} onClick={this.toggleRecording}/> 
-                 <Button buttonText = {this.state.playButtonText} onClick={this.toggleSongPlaying} />
-              </div>
 
+
+        return (
+            <main style = {mainContainer}> 
+
+              <Loader/>
+        
+              <section>
+                <div className="buttonContainer">
+                  <TimeDisplay isPlaying = {this.state.isPlaying}/>
+                  <Button buttonText = {this.state.recordButtonText} onClick={this.toggleRecording} isRecording={this.state.isRecording}/> 
+                  <Button buttonText = {this.state.playButtonText} onClick={this.toggleSongPlaying} />
+                </div>
              </section>
+
           </main>
 
         )
