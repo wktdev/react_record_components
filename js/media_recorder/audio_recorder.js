@@ -1,55 +1,53 @@
-class AudioRecorder {
 
-    constructor() {
-        this.mediaRecorder;
-        this.chunks = [];
-        this.blob;
-        this.recordedAudioBuffers = [];
-    }
+var mic, recorder, soundFile;
+var state = 0;
 
-    record() {
+function setup() {
+  background(200);
+  // create an audio in
+  mic = new p5.AudioIn();
 
-        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream)=> {
-            this.mediaRecorder = new MediaRecorder(stream);
-            this.mediaRecorder.start();
-            console.log( this.mediaRecorder.state);
-            this.mediaRecorder.ondataavailable = (e)=> {
-                this.chunks.push(e.data);
-            }
+  // prompts user to enable their browser mic
+  mic.start();
 
-        })
+  // create a sound recorder
+  recorder = new p5.SoundRecorder();
 
-    }
+  // connect the mic to the recorder
+  recorder.setInput(mic);
 
-    stop() {
-
-        this.mediaRecorder.stop();
-         console.log( this.mediaRecorder.state);
-        this.mediaRecorder.onstop = (e)=> {
-            this.blob = new Blob(this.chunks, { 'type': 'audio/mp3' });
-            this.blobToBuffer(this.blob)
-        }
-
-    }
-
-    blobToBuffer(blob){
-    	   var fileReader = new FileReader();
-
-           fileReader.onload = (e)=> {
-                     this.recordedAudioBuffers.push(fileReader.result);
-                     console.log(this.recordedAudioBuffers);
-            }
-
-        fileReader.readAsArrayBuffer(blob);    
-    }
+  // this sound file will be used to
+  // playback & save the recording
+  soundFile = new p5.SoundFile();
 
 }
 
+function keyPressed() {
+  // make sure user enabled the mic
+  if (state === 0 && mic.enabled) {
 
+    // record to our p5.SoundFile
+    recorder.record(soundFile);
 
+    background(255,0,0);
+    text('Recording!', 20, 20);
+    state++;
+  }
+  else if (state === 1) {
+    background(0,255,0);
 
-let audioRecorder = new AudioRecorder();
-// audioRecorder.record();
-// audioRecorder.stop();
-// audioRecorder.blobToBuffer();
+    // stop recorder and
+    // send result to soundFile
+    recorder.stop();
+
+    text('Stopped', 20, 20);
+    state++;
+  }
+
+  else if (state === 2) {
+    soundFile.play(); // play the result!
+    save(soundFile, 'mySound.wav');
+    state++;
+  }
+}
 
