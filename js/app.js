@@ -7,6 +7,8 @@
 
 
 
+
+
     //__________________________BEGIN load sound via p5.js
 
 
@@ -24,16 +26,6 @@
 
    //___________________________END load sound via p5.js
 
-
-    class Loader extends React.Component {
-        render() {
-            return (
-                <div>
-                  <div id="loader"></div>
-                </div>
-            )
-        }
-    }
 
 
     const leftPad = (width, n) => {
@@ -62,7 +54,7 @@
         <span>{leftPad(2, units.min)}:</span>
         <span>{leftPad(2, units.sec)}.</span>
         <span>{units.msec}</span>
-      </div>
+        </div>
             );
         }
     }
@@ -127,9 +119,9 @@
 
 
             return (
-                <div id="time-display">   
-             <TimeElapsed  timeElapsed={this.state.timeElapsed} />
-          </div>
+            <div id="time-display">   
+              <TimeElapsed  timeElapsed={this.state.timeElapsed} />
+            </div>
             )
         }
 
@@ -181,11 +173,13 @@
             this.playStartCurrentTime;
             this.recordStartCurrentTime;
             this.recordEndCurrentTime;
+
             this.toggleSongPlaying = this.toggleSongPlaying.bind(this);
             this.toggleRecording = this.toggleRecording.bind(this);
  
 
             this.state = {
+                audioRecordings:[],
                 isPlaying: false,
                 isRecording: false,
                 recordButtonText: "Start Recording",
@@ -239,7 +233,7 @@
 
                 this.setState({
                     isRecording: true,
-
+                    
                     recordButtonText: "Stop Recording",
                 })
 
@@ -263,7 +257,20 @@
                 console.log();
                 let timeStamp =  Math.abs(this.recordStartCurrentTime - this.playStartCurrentTime);
                 console.log(timeStamp);
-                audioRecordings.push({timestamp:timeStamp,sound:soundFile})
+
+                //_____________________________BEGIN update state
+
+                let tempAudioRecordings = this.state.audioRecordings;
+                tempAudioRecordings.push({timestamp:timeStamp,sound:soundFile});
+                this.setState({
+                    audioRecordings:tempAudioRecordings 
+                });
+
+               
+
+                //_____________________________END update state
+
+               
                 save(soundFile, 'mySound.wav');
             }
 
@@ -295,22 +302,26 @@
                 outlineStyle: "solid"
             }
 
-
+           let listRecordings = this.state.audioRecordings.map((val,index)=>{
+                   return <li key={index}>recording number: {index+1} timestamp: {val.timestamp} | PLAY <input type='checkbox'></input></li>
+           })
 
             return (
-                <main style = {mainContainer}> 
-
-              <Loader/>
+            <main style = {mainContainer}> 
         
-              <section>
-                <div className="buttonContainer">
-                  <TimeDisplay isPlaying = {this.state.isPlaying}/>
-                  <Button buttonText = {this.state.recordButtonText} onClick={this.toggleRecording} isRecording={this.state.isRecording}/> 
-                  <Button buttonText = {this.state.playButtonText} onClick={this.toggleSongPlaying} />
-                </div>
-             </section>
+                 <section>
+                    <div className="buttonContainer">
+                      <TimeDisplay isPlaying = {this.state.isPlaying}/>
+                      <Button buttonText = {this.state.recordButtonText} onClick={this.toggleRecording} isRecording={this.state.isRecording}/> 
+                      <Button buttonText = {this.state.playButtonText} onClick={this.toggleSongPlaying} />
+                    </div>
+                 </section>
 
-          </main>
+                 <ul>
+                  {listRecordings}
+                 </ul>
+
+            </main>
 
             )
         }
