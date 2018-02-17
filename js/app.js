@@ -200,12 +200,6 @@
             })
         }
 
-        componentDidMount() {
-
-
-        }
-
-
 
 
         toggleSongPlaying() {
@@ -230,7 +224,37 @@
                     playButtonText: "Play Song"
                 })
 
-                // this.stopRecording()
+                //___________________________BEGIN if recording when playing stops... then stop recording too
+
+                if(this.state.isRecording){
+                      this.setState({
+                    isRecording: false,
+                    recordButtonText: "Start Recording"
+                });
+
+                recorder.stop();
+
+             
+            
+
+                //_____________________________BEGIN update state
+                let timeStamp =  Math.abs(this.recordStartCurrentTime - this.playStartCurrentTime);
+
+                let tempAudioRecordings = this.state.audioRecordings;
+                tempAudioRecordings.push({timestamp:timeStamp,sound:soundFile,checkedToPlay:false});
+                this.setState({
+                    audioRecordings:tempAudioRecordings 
+                });
+
+               
+                //_____________________________END update state
+
+
+
+                //___________________________END if recording when playing stops... then stop recording too
+
+       
+                }
 
                 song.stop()
 
