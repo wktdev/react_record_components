@@ -248,7 +248,9 @@
                     isRecording: true,
                     
                     recordButtonText: "Stop Recording",
-                })
+                });
+
+               this.cueSelectedRecordingsToPlay();
 
                 // audioRecorder.record();
                 mic = new p5.AudioIn();
@@ -259,7 +261,8 @@
                 this.recordStartCurrentTime = audioContext.currentTime
                 recorder.record(soundFile);
 
-                
+
+           
 
             } else {
 
