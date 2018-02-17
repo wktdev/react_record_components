@@ -5,6 +5,21 @@
     soundFile,
     audioRecordings = [];
 
+    //__________________________BEGIN helpers
+
+
+    function stopAllSoundFiles(arr,prop){ // @Stop all sound recordings from playing
+        arr.forEach((val)=>{
+           val[prop].stop()
+        })
+    }
+
+
+
+
+
+    //__________________________END helpers
+
 
 
 
@@ -236,6 +251,8 @@
 
              
             
+          
+
 
                 //_____________________________BEGIN update state
                 let timeStamp =  Math.abs(this.recordStartCurrentTime - this.playStartCurrentTime);
@@ -256,7 +273,11 @@
        
                 }
 
-                song.stop()
+                stopAllSoundFiles(this.state.audioRecordings,'sound');
+
+
+
+                song.stop();
 
             }
 
