@@ -259,6 +259,10 @@
                 this.recordStartCurrentTime = audioContext.currentTime
                 recorder.record(soundFile);
 
+               this.playStartCurrentTime = audioContext.currentTime;
+               console.log(this.playStartCurrentTime);
+               this.cueSelectedRecordingsToPlay();
+
             } else {
 
                 this.setState({
