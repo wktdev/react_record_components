@@ -176,16 +176,28 @@
 
             this.toggleSongPlaying = this.toggleSongPlaying.bind(this);
             this.toggleRecording = this.toggleRecording.bind(this);
+            this.checkedToPlay = this.checkedToPlay.bind(this);
+            this.cueSelectedRecordingsToPlay = this.cueSelectedRecordingsToPlay.bind(this);
  
 
             this.state = {
-                audioRecordings:[],
+                audioRecordings:[], // {timestamp: 0, sound: p5.SoundFile, checkedToPlay: false}
                 isPlaying: false,
                 isRecording: false,
                 recordButtonText: "Start Recording",
                 playButtonText: "Play Song",
             }
 
+        }
+
+        cueSelectedRecordingsToPlay(arr = this.state.audioRecordings){
+
+            arr.forEach((val)=>{
+                console.log("Time stamps: " + val.timestamp);
+               if(val.checkedToPlay){
+                   val.sound.play(val.timestamp)
+               }
+            })
         }
 
         componentDidMount() {
@@ -208,6 +220,7 @@
    
                this.playStartCurrentTime = audioContext.currentTime;
                console.log(this.playStartCurrentTime);
+               this.cueSelectedRecordingsToPlay();
                song.play()
 
             } else {
@@ -254,24 +267,24 @@
                 });
 
                 recorder.stop();
+
                 console.log();
                 let timeStamp =  Math.abs(this.recordStartCurrentTime - this.playStartCurrentTime);
-                console.log(timeStamp);
+
 
                 //_____________________________BEGIN update state
 
                 let tempAudioRecordings = this.state.audioRecordings;
-                tempAudioRecordings.push({timestamp:timeStamp,sound:soundFile});
+                tempAudioRecordings.push({timestamp:timeStamp,sound:soundFile,checkedToPlay:false});
                 this.setState({
                     audioRecordings:tempAudioRecordings 
                 });
 
                
-
                 //_____________________________END update state
 
                
-                save(soundFile, 'mySound.wav');
+                // save(soundFile, 'mySound.wav');
             }
 
 
@@ -284,17 +297,34 @@
                     playButtonText: "Stop Song",
                 });
 
+
                 this.playStartCurrentTime = audioContext.currentTime;
                 console.log(this.playStartCurrentTime);
                 song.play();
             }
         }
 
+        checkedToPlay(index){
+            let arrayTemp = this.state.audioRecordings;
+            if(!arrayTemp[index].checkedToPlay){
+                arrayTemp[index].checkedToPlay = true;
+            }else{
+                arrayTemp[index].checkedToPlay = false;
+            }
+
+            this.setState({
+                audioRecordings:arrayTemp
+            })
+
+            console.log(this.state.audioRecordings[index].checkedToPlay);
+
+        }
+
    
 
         render() {
 
-
+            console.log(this.state.audioRecordings);
             const mainContainer = {
                 width: "700px",
                 margin: "0 auto",
@@ -303,7 +333,7 @@
             }
 
            let listRecordings = this.state.audioRecordings.map((val,index)=>{
-                   return <li key={index}>recording number: {index+1} timestamp: {val.timestamp} | PLAY <input type='checkbox'></input></li>
+                   return <li key={index}>recording number: {index+1} timestamp: {val.timestamp} | PLAY <input type='checkbox' onChange={()=>this.checkedToPlay(index)}></input></li>
            })
 
             return (
